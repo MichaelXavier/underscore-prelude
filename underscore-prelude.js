@@ -22,7 +22,7 @@ _.mixin({
   },
 
   '*': function(x, y) {
-    return x + y;
+    return x * y;
   },
   //TODO: more "operators
 
@@ -117,8 +117,9 @@ _.mixin({
 
   id: _.identity,
 
-  'const': function(x, y) {
-    return x;
+  // Going to make this a partially applied function because it is worthless otherwise
+  'const': function(x) {
+    return function() { return x; };
   },
 
   '.': _.compose,
@@ -128,12 +129,10 @@ _.mixin({
   },
 
   init: function(xs) {
-    return arr.slice(0, -1);
+    return xs.slice(0, -1);
   },
 
-  'null': function(xs) {
-    return xs.length === 0;
-  },
+  'null': _.isEmpty,
 
   '!!': function(idx, xs) {
     return xs[idx];
@@ -158,6 +157,7 @@ _.mixin({
     return _.foldl(xs, _['*'], 1);
   },
 
+  //TODO: string as array?
   concat: function(xss) {
     return _.foldl(xss, _['++'], []);
   },
@@ -166,11 +166,43 @@ _.mixin({
   //TODO: figure out argument order. this is getting silly
   concatMap: function(fn, xs) {
     return _.concat(_.map(xs, fn));
-  }
+  },
 
   maximum: _.max,
 
   minimum: _.min,
+
+  replicate: function(n, x) {
+    var xs = new Array(n);
+    while (--n >= 0) xs[n] = x;
+    return xs;
+  },
+
+  take: function(n, xs) {
+    return xs.slice(0, n);
+  },
+
+  drop: function(n, xs) {
+    return xs.slice(_.maximum([n, 0]));
+  },
+
+  splitAt: function(n, xs) {
+    return [_.take(n, xs), _.drop(n, xs)];
+  },
+
+  //TODO: refactor
+
+  takeWhile: function(fn, xs) {
+    var i = 0;
+    while (i < xs.length && fn(xs[i])) i++;
+    return _.take(i, xs);
+  },
+
+  dropWhile: function(fn, xs) {
+    var i = 0;
+    while (i < xs.length && fn(xs[i])) i++;
+    return _.drop(i, xs);
+  }
   //TODO: length is reserved
 
   //TODO: float stuff
