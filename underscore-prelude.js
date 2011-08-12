@@ -1,211 +1,229 @@
-//TODO: preserve context?
-_.mixin({
-  fst: function(pair) {
-    return pair[0]; 
-  },
+(function() {
+  var ArrayProto = Array.prototype
+      slice      = ArrayProto.slice;
+      flip       = function(fn) {
+        return function(a, b) {
+          var args = [b, a].concat(slice.call(arguments, 2));
+          // The context is probably wrong
+          return fn.apply(this, args);
+        };
+      },
+      concat     = function(xss) {
+        return _.foldl(_['++'], xss, []);
+      },
+      map        = flip(_.map)
 
-  snd: function(pair) {
-    return pair[1];
-  },
 
-  //TODO curry
+  //TODO: preserve context?
+  _.mixin({
+    fst: function(pair) {
+      return pair[0]; 
+    },
 
-  //TODO uncurry
+    snd: function(pair) {
+      return pair[1];
+    },
 
-  //TODO: Ord
+    //TODO curry
 
-  //TODO: Enum
+    //TODO uncurry
 
-  //TODO: Bounded
-  '+': function(x, y) {
-    return x + y;
-  },
+    //TODO: Ord
 
-  '*': function(x, y) {
-    return x * y;
-  },
-  //TODO: more "operators
+    //TODO: Enum
 
-  negate: function(x) {
-    return -x;
-  },
+    //TODO: Bounded
+    '+': function(x, y) {
+      return x + y;
+    },
 
-  abs: Math.abs,
+    '*': function(x, y) {
+      return x * y;
+    },
+    //TODO: more "operators
 
-  signum: function(x) {
-    return x < 0 ? -1 : x === 0 ? 0 : 1;
-  },
+    negate: function(x) {
+      return -x;
+    },
 
-  //TODO: fromInteger = parseInt(x, 10) ?
+    abs: Math.abs,
 
-  //TODO: get a better understanding of diff between quot/rem and div/mod
-  quot: function(x, y) {
-    return Math.floor(x / y);
-  },
+    signum: function(x) {
+      return x < 0 ? -1 : x === 0 ? 0 : 1;
+    },
 
-  rem: function(x, y) {
-    return x % y; //TOD: is this right?
-  },
+    //TODO: fromInteger = parseInt(x, 10) ?
 
-  toInteger: function(x) {
-    return parseInt(x, 10);
-  },
+    //TODO: get a better understanding of diff between quot/rem and div/mod
+    quot: function(x, y) {
+      return Math.floor(x / y);
+    },
 
-  //TODO: missed a lot of math stuff
+    rem: function(x, y) {
+      return x % y; //TOD: is this right?
+    },
 
-  subtract: function(x, y) {
-    return x - y;
-  },
+    toInteger: function(x) {
+      return parseInt(x, 10);
+    },
 
-  even: function(x) {
-    return _.rem(x, 2) === 0;
-  },
+    //TODO: missed a lot of math stuff
 
-  odd: function(x) {
-    return _.not(_.even(x));
-  },
+    subtract: function(x, y) {
+      return x - y;
+    },
 
-  not: function(x) {
-    return !x;
-  },
+    even: function(x) {
+      return _.rem(x, 2) === 0;
+    },
 
-  pi: function() {
-    return Math.PI;
-  },
+    odd: function(x) {
+      return _.not(_.even(x));
+    },
 
-  exp: Math.exp,
+    not: function(x) {
+      return !x;
+    },
 
-  sqrt: Math.sqrt,
+    pi: function() {
+      return Math.PI;
+    },
 
-  log: Math.log,
+    exp: Math.exp,
 
-  // Not sure if this is too inconvenient to use
-  '**': Math.pow,
+    sqrt: Math.sqrt,
 
-  //TODO logBase
+    log: Math.log,
 
-  sin: Math.sin,
+    // Not sure if this is too inconvenient to use
+    '**': Math.pow,
 
-  tan: Math.tan,
+    //TODO logBase
 
-  cos: Math.cos,
+    sin: Math.sin,
 
-  asin: Math.asin,
+    tan: Math.tan,
 
-  atan: Math.atan,
+    cos: Math.cos,
 
-  acos: Math.acos,
-  //TODO: h variation
+    asin: Math.asin,
 
-  truncate: function(x) {
-    return x >= 0 ? _.floor(x) : x;
-  },
+    atan: Math.atan,
 
-  round: Math.round,
+    acos: Math.acos,
+    //TODO: h variation
 
-  ceiling: Math.ceil,
+    truncate: function(x) {
+      return x >= 0 ? _.floor(x) : x;
+    },
 
-  floor: Math.floor,
+    round: Math.round,
 
-  floatRadix: function(x) {
-    return 2;
-  },
+    ceiling: Math.ceil,
 
-  isInfinite: function(x) {
-    return x === Infinity;
-  },
+    floor: Math.floor,
 
-  id: _.identity,
+    floatRadix: function(x) {
+      return 2;
+    },
 
-  // Going to make this a partially applied function because it is worthless otherwise
-  'const': function(x) {
-    return function() { return x; };
-  },
+    isInfinite: function(x) {
+      return x === Infinity;
+    },
 
-  '.': _.compose,
+    id: _.identity,
 
-  '++': function(xs, ys) {
-    return xs.concat(ys);
-  },
+    // Going to make this a partially applied function because it is worthless otherwise
+    'const': function(x) {
+      return function() { return x; };
+    },
 
-  init: function(xs) {
-    return xs.slice(0, -1);
-  },
+    '.': _.compose,
 
-  'null': _.isEmpty,
+    '++': function(xs, ys) {
+      return xs.concat(ys);
+    },
 
-  '!!': function(idx, xs) {
-    return xs[idx];
-  },
+    init: function(xs) {
+      return xs.slice(0, -1);
+    },
 
-  // _'s foldl1 works when no starting value given
-  foldl1: _.foldl,
+    'null': _.isEmpty,
 
-  and: function(xs) {
-    return _.all(xs, _.id);
-  },
+    '!!': function(idx, xs) {
+      return xs[idx];
+    },
 
-  or: function(xs) {
-    return _.any(xs, _.id);
-  },
+    // _'s foldl1 works when no starting value given
+    foldl:  flip(_.foldl),
 
-  sum: function(xs) {
-    return _.foldl(xs, _['+'], 0);
-  },
+    foldl1: flip(_.foldl),
 
-  product: function(xs) {
-    return _.foldl(xs, _['*'], 1);
-  },
+    and: function(xs) {
+      return _.all(xs, _.id);
+    },
 
-  //TODO: string as array?
-  concat: function(xss) {
-    return _.foldl(xss, _['++'], []);
-  },
+    or: function(xs) {
+      return _.any(xs, _.id);
+    },
 
-  //TODO: compose?
-  //TODO: figure out argument order. this is getting silly
-  concatMap: function(fn, xs) {
-    return _.concat(_.map(xs, fn));
-  },
+    sum: function(xs) {
+      return _.foldl(xs, _['+'], 0);
+    },
 
-  maximum: _.max,
+    product: function(xs) {
+      return _.foldl(xs, _['*'], 1);
+    },
 
-  minimum: _.min,
+    //TODO: string as array?
+    concat: concat,
+    //TODO: compose?
+    //TODO: figure out argument order. this is getting silly
+    concatMap: _.compose(concat, map),
 
-  replicate: function(n, x) {
-    var xs = new Array(n);
-    while (--n >= 0) xs[n] = x;
-    return xs;
-  },
+    maximum: _.max,
 
-  take: function(n, xs) {
-    return xs.slice(0, n);
-  },
+    minimum: _.min,
 
-  drop: function(n, xs) {
-    return xs.slice(_.maximum([n, 0]));
-  },
+    replicate: function(n, x) {
+      var xs = new Array(n);
+      while (--n >= 0) xs[n] = x;
+      return xs;
+    },
 
-  splitAt: function(n, xs) {
-    return [_.take(n, xs), _.drop(n, xs)];
-  },
+    take: function(n, xs) {
+      return xs.slice(0, n);
+    },
 
-  //TODO: refactor
+    drop: function(n, xs) {
+      return xs.slice(_.maximum([n, 0]));
+    },
 
-  takeWhile: function(fn, xs) {
-    var i = 0;
-    while (i < xs.length && fn(xs[i])) i++;
-    return _.take(i, xs);
-  },
+    splitAt: function(n, xs) {
+      return [_.take(n, xs), _.drop(n, xs)];
+    },
 
-  dropWhile: function(fn, xs) {
-    var i = 0;
-    while (i < xs.length && fn(xs[i])) i++;
-    return _.drop(i, xs);
-  }
-  //TODO: length is reserved
+    //TODO: refactor
 
-  //TODO: float stuff
+    takeWhile: function(fn, xs) {
+      var i = 0;
+      while (i < xs.length && fn(xs[i])) i++;
+      return _.take(i, xs);
+    },
 
-  //TODO: succ? could i use byte/charAt?
-});
+    dropWhile: function(fn, xs) {
+      var i = 0;
+      while (i < xs.length && fn(xs[i])) i++;
+      return _.drop(i, xs);
+    },
+    //TODO: length is reserved
+
+    //TODO: float stuff
+
+    //TODO: succ? could i use byte/charAt?
+
+    flip: flip,
+
+    map: map
+  });
+})();

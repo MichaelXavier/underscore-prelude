@@ -357,4 +357,20 @@ describe("underscore prelude extensions", function() {
       expect(_.dropWhile(_.even, [1,3,5,7])).toEqual([1,3,5,7]);
     });
   });
+
+  describe("flip", function() {
+    it("returns a function with the first 2 arguments transposed", function() {
+      var fn  = function(a, b) { return [a + 1, b + 2]; },
+          res = _.flip(fn);
+
+      expect(res(10, 100)).toEqual([101, 12]);
+    });
+
+    it("leaves subsequent arguments alone", function() {
+      var fn  = function(a, b, c, d) { return [a + 1, b + 2, c + 3, d + 4]; },
+          res = _.flip(fn);
+
+      expect(res(10, 100, 3, 4)).toEqual([101, 12, 6, 8]);
+    });
+  });
 });
